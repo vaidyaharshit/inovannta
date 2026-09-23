@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en" class="light scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INNOVENTA — Event & Certificate Management Platform</title>
+  <meta name="description" content="Discover tech events, register seamlessly, and verify official event certificates instantly with INNOVENTA security verification.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white relative overflow-x-hidden bg-grid-pattern">
+
+  <!-- SCROLL PROGRESS INDICATOR -->
+  <div id="scroll-progress-bar"></div>
+
+  <!-- FLOATING AMBIENT BACKGROUND DECORATIONS -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+    <div class="ambient-orb animate-float-slow w-96 h-96 bg-blue-400/20 dark:bg-blue-600/15 -top-20 -left-20"></div>
+    <div class="ambient-orb animate-float-reverse w-[30rem] h-[30rem] bg-indigo-400/15 dark:bg-indigo-600/10 top-1/3 -right-32"></div>
+    <div class="ambient-orb animate-float-slow w-80 h-80 bg-emerald-400/15 dark:bg-emerald-600/10 bottom-10 left-10"></div>
+  </div>
+
+  <!-- HEADER NAVIGATION -->
+  <header class="sticky top-0 z-40 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#home" data-tab="home" class="flex items-center gap-2.5 group py-4">
+        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white font-heading">INNOVENTA</span>
+          <span class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 tracking-wider uppercase -mt-1">Event & Certificate Portal</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#events" data-tab="events" class="nav-link text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 py-1">Events</a>
+        <a href="#how-it-works" data-tab="how-it-works" class="nav-link text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 py-1">How It Works</a>
+        <a href="#verify" data-tab="verify" class="nav-link text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 py-1 flex items-center gap-1.5">
+          <span>Verify Certificate</span>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-300/40">Secure</span>
+        </a>
+        <a href="#my-certificates" data-tab="my-certificates" class="nav-link text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 py-1 flex items-center gap-1.5">
+          <span>My Certificates</span>
+          <span id="saved-cert-count-badge" class="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">0</span>
+        </a>
+        <a href="#about" data-tab="about" class="nav-link text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 py-1">About</a>
+      </nav>
+
+      <!-- Right Controls (Theme Switcher & Mobile Menu) -->
+      <div class="flex items-center gap-3">
+        <button id="theme-toggle-btn" type="button" aria-label="Toggle Light/Dark Theme" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors">
+          <span id="theme-icon"></span>
+          <span id="theme-label" class="hidden sm:inline">Light</span>
+        </button>
+
+        <button id="mobile-menu-btn" type="button" aria-label="Open Navigation Menu" class="md:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MOBILE NAVIGATION DRAWER -->
+  <div id="mobile-menu-drawer" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex justify-end">
+    <div class="w-4/5 max-w-xs bg-white dark:bg-slate-900 h-full p-6 flex flex-col justify-between shadow-2xl">
+      <div>
+        <div class="flex items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800">
+          <span class="text-lg font-bold text-slate-900 dark:text-white font-heading">Menu</span>
+          <button id="mobile-menu-close-btn" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <nav class="flex flex-col gap-4 mt-6">
+          <a href="#events" data-tab="events" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50">Explore Events</a>
+          <a href="#how-it-works" data-tab="how-it-works" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50">How It Works</a>
+          <a href="#verify" data-tab="verify" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50 flex items-center justify-between">
+            <span>Verify Certificate</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-semibold">Instant</span>
+          </a>
+          <a href="#my-certificates" data-tab="my-certificates" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50">My Certificates</a>
+          <a href="#about" data-tab="about" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2">About Platform</a>
+        </nav>
+      </div>
+
+      <div class="pt-6 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 text-center">
+        INNOVENTA Technology Portal &copy; 2026
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow z-10 relative">
+
+    <!-- HOME TAB -->
+    <section id="tab-home" class="tab-content">
+      
+      <!-- HERO SECTION -->
+      <div id="hero-section" class="relative overflow-hidden pt-16 pb-20 border-b border-slate-200/60 dark:border-slate-800/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          
+          <div class="reveal-init inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100/80 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 text-xs font-semibold mb-8">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span>Official Event Management & Verification Engine</span>
+          </div>
+
+          <h1 class="reveal-init stagger-delay-1 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight font-heading mb-6 max-w-4xl mx-auto leading-tight">
+            Events. Certificates. <span class="text-blue-600 dark:text-blue-400">Verified.</span>
+          </h1>
+
+          <p class="reveal-init stagger-delay-2 text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed mb-10">
+            Discover premier tech competitions, register easily, and verify official event certificates instantly with tamper-proof validation.
+          </p>
+
+          <div class="reveal-init stagger-delay-3 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-16">
+            <a href="#events" onclick="window.switchTab('events')" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-500/25 transition-all duration-200 text-center flex items-center justify-center gap-2 group">
+              <span>Explore Events</span>
+              <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+            <a href="#verify" onclick="window.switchTab('verify')" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm shadow-sm transition-all duration-200 text-center flex items-center justify-center gap-2">
+              <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Verify Certificate</span>
+            </a>
+          </div>
+
+          <!-- Hero Certificate Preview Visual with Parallax Layer -->
+          <div id="hero-certificate-parallax" class="reveal-init stagger-delay-4 max-w-3xl mx-auto relative cursor-pointer" onclick="window.switchTab('verify')">
+            <div class="certificate-preview-card p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 relative z-10 text-left overflow-hidden">
+              <div class="flex items-center justify-between pb-4 border-b border-slate-200/60 dark:border-slate-800/60 mb-6">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold font-heading">IN</div>
+                  <span class="text-xs font-extrabold tracking-wider uppercase text-slate-500 dark:text-slate-400">INNOVENTA OFFICIAL CREDENTIAL</span>
+                </div>
+                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300/40 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                  Verified Authenticity
+                </span>
+              </div>
+
+              <div class="space-y-3 mb-6">
+                <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Certificate of Achievement</p>
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-heading">National Tech Tank Championship 2026</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Awarded to <span class="font-bold text-slate-800 dark:text-slate-200">Rahul Sharma</span> for Outstanding Innovation & Execution</p>
+              </div>
+
+              <div class="flex items-center justify-between text-xs font-mono text-slate-400 pt-4 border-t border-slate-200/60 dark:border-slate-800/60">
+                <span>ID: INNOVENTA-2026-001</span>
+                <span class="text-blue-600 dark:text-blue-400 font-semibold underline">Click to Test Verification →</span>
+              </div>
+            </div>
+            
+            <!-- Soft Ambient Glow behind Certificate -->
+            <div class="absolute -inset-4 bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-60 -z-10"></div>
+          </div>
+
+          <!-- Feature Highlights -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-20 text-left">
+            <div class="reveal-init stagger-delay-1 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm interactive-card">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 font-heading">Curated Events</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">Browse hackathons, workshops, and startup pitching tanks with full details and instant registration.</p>
+            </div>
+
+            <div class="reveal-init stagger-delay-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm interactive-card">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 font-heading">Instant Verification</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">Validate credentials by Certificate ID or simulated QR scan with tamper-proof status display.</p>
+            </div>
+
+            <div class="reveal-init stagger-delay-3 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm interactive-card">
+              <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 font-heading">Export & Manage</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">Download high-res official certificate files directly to your device and save credentials locally.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- HOW IT WORKS SECTION -->
+      <div id="how-it-works-section" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-200/60 dark:border-slate-800/60 scroll-mt-20">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="reveal-init text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2 block">Simplified Workflow</span>
+          <h2 class="reveal-init stagger-delay-1 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading mb-4">How INNOVENTA Works</h2>
+          <p class="reveal-init stagger-delay-2 text-slate-600 dark:text-slate-400 text-sm sm:text-base">Three seamless steps from participating in top tech events to securing cryptographically verified achievements.</p>
+        </div>
+
+        <div class="relative max-w-4xl mx-auto">
+          <!-- Connecting Line Reveal -->
+          <div class="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-slate-200 dark:bg-slate-800 -translate-y-1/2 -z-0">
+            <div id="how-it-works-line" class="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500 w-0 how-it-works-line"></div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            
+            <!-- Step 01 -->
+            <div class="reveal-init stagger-delay-1 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 text-center interactive-card relative">
+              <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white text-xl font-bold font-heading flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/20">
+                01
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">Discover</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Explore upcoming hackathons, Tech Tanks, workshops, and innovation challenges with live updates.</p>
+            </div>
+
+            <!-- Step 02 -->
+            <div class="reveal-init stagger-delay-2 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 text-center interactive-card relative">
+              <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white text-xl font-bold font-heading flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/20">
+                02
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">Participate</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Register in one click, join project tracks, present solutions, and compete for certified credentials.</p>
+            </div>
+
+            <!-- Step 03 -->
+            <div class="reveal-init stagger-delay-3 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 text-center interactive-card relative">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white text-xl font-bold font-heading flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20">
+                03
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-heading mb-2">Verify</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Instantly validate authenticity using your Certificate ID or QR code with tamper-proof security.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- EVENTS TAB / SECTION -->
+    <section id="tab-events" class="tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-20">
+      <div class="mb-10 text-center sm:text-left">
+        <h2 class="reveal-init text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading mb-3">Explore Events</h2>
+        <p class="reveal-init stagger-delay-1 text-slate-600 dark:text-slate-400 text-sm max-w-xl">Find upcoming hackathons, workshops, technical seminars, and competitions hosted by INNOVENTA.</p>
+      </div>
+
+      <!-- Controls: Search & Category Filter -->
+      <div class="reveal-init stagger-delay-2 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-10">
+        <!-- Search Input -->
+        <div class="relative flex-1 max-w-md">
+          <svg class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input id="event-search-input" type="text" placeholder="Search by event name or keyword..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm">
+        </div>
+
+        <!-- Category Pills Filter -->
+        <div id="event-category-filters" class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+          <button data-category="All" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-sm transition-all whitespace-nowrap">All Events</button>
+          <button data-category="Tech Tank" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all whitespace-nowrap">Tech Tank</button>
+          <button data-category="Hackathon" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all whitespace-nowrap">Hackathon</button>
+          <button data-category="Workshop" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all whitespace-nowrap">Workshop</button>
+          <button data-category="Tech Talk" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all whitespace-nowrap">Tech Talk</button>
+          <button data-category="Competition" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all whitespace-nowrap">Competition</button>
+          <button data-category="Seminar" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all whitespace-nowrap">Seminar</button>
+        </div>
+      </div>
+
+      <!-- Events Grid -->
+      <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+      <!-- Empty State -->
+      <div id="events-empty-state" class="hidden text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 max-w-md mx-auto">
+        <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-heading mb-1">No events found.</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Try adjusting your search criteria or selecting a different category filter.</p>
+      </div>
+    </section>
+
+    <!-- CERTIFICATE VERIFICATION TAB / SECTION -->
+    <section id="tab-verify" class="tab-content max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-20">
+      
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <div class="reveal-init inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 text-xs font-semibold mb-3">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Secure Verification Portal
+        </div>
+        <h2 class="reveal-init stagger-delay-1 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading mb-3">Verify Your Certificate</h2>
+        <p class="reveal-init stagger-delay-2 text-slate-600 dark:text-slate-400 text-sm">Enter the Certificate ID printed on your document or scan the certificate QR code to validate credential authenticity.</p>
+      </div>
+
+      <!-- Verification Input Card Highlight -->
+      <div class="reveal-init stagger-delay-3 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none mb-10 max-w-2xl mx-auto relative group">
+        
+        <!-- Subtle Glow Layer on Viewport Reveal -->
+        <div class="absolute -inset-1 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-emerald-500/10 rounded-3xl blur-lg opacity-50 group-hover:opacity-100 transition-opacity"></div>
+        
+        <div class="relative z-10 flex flex-col gap-4">
+          
+          <label for="cert-id-input" class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Certificate ID Number</label>
+          
+          <div class="relative flex items-center">
+            <input id="cert-id-input" type="text" placeholder="e.g. INNOVENTA-2026-001" class="w-full pl-4 pr-12 py-3.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-base font-mono uppercase tracking-wider focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-500/20 transition-all">
+            <span class="absolute right-3.5 text-slate-400 text-xs font-mono">ID</span>
+          </div>
+
+          <p id="verify-helper-text" class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Enter the Certificate ID printed on your certificate. (Try: <button type="button" onclick="document.getElementById('cert-id-input').value='INNOVENTA-2026-001'; window.performVerification('INNOVENTA-2026-001');" class="text-blue-600 dark:text-blue-400 font-mono underline hover:text-blue-700">INNOVENTA-2026-001</button>)
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+            <button id="verify-cert-btn" type="button" class="w-full sm:flex-1 py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 group">
+              <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <span>Verify Certificate</span>
+            </button>
+
+            <button id="scan-qr-btn" type="button" class="w-full sm:w-auto py-3.5 px-5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all flex items-center justify-center gap-2">
+              <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+              <span>Scan to Verify</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- DYNAMIC VERIFICATION STATES -->
+      <div id="verification-display-container" class="max-w-2xl mx-auto">
+        
+        <!-- State 0: Idle Prompt -->
+        <div id="verification-state-idle" class="text-center py-8 text-slate-400 text-xs">
+          Awaiting input. Enter ID above or tap Scan to Verify.
+        </div>
+
+        <!-- State 1: Loading State -->
+        <div id="verification-state-searching" class="hidden bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 text-center shadow-md">
+          <div class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p class="text-base font-semibold text-slate-800 dark:text-slate-200">Searching certificate...</p>
+          <p class="text-xs text-slate-500 mt-1">Checking cryptographic registry records</p>
+        </div>
+
+        <!-- State 2: Empty Input Error State -->
+        <div id="verification-state-empty" class="hidden bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-2xl p-6 text-center">
+          <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <p class="text-base font-bold text-amber-900 dark:text-amber-200 font-heading">Please enter a Certificate ID.</p>
+          <p class="text-xs text-amber-700 dark:text-amber-400 mt-1">The input field cannot be empty. Example ID: INNOVENTA-2026-001</p>
+        </div>
+
+        <!-- State 3: Invalid Certificate Error State -->
+        <div id="verification-state-invalid" class="hidden bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-2xl p-6 text-center">
+          <div class="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto mb-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </div>
+          <p class="text-base font-bold text-rose-900 dark:text-rose-200 font-heading">Certificate not found.</p>
+          <p class="text-xs text-rose-700 dark:text-rose-400 mt-1 mb-4">No matching certificate credential was found in our verification database.</p>
+          <button id="btn-verify-another-invalid" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300 text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors">
+            Try Another ID
+          </button>
+        </div>
+
+        <!-- State 4: Validated Verified Result State -->
+        <div id="verification-state-result" class="hidden bg-white dark:bg-slate-900 border-2 border-emerald-500/80 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+          
+          <!-- Banner Ribbon -->
+          <div class="flex items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 mb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center verified-glow">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <div>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">AUTHENTIC CREDENTIAL</span>
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-heading">CERTIFICATE VERIFIED ✓</h3>
+              </div>
+            </div>
+            <span id="result-status-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/40">Verified</span>
+          </div>
+
+          <!-- Credential Details Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+            <div>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Participant Name</p>
+              <p id="result-participant-name" class="text-lg font-bold text-slate-900 dark:text-white font-heading"></p>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Event Name</p>
+              <p id="result-event-name" class="text-base font-bold text-blue-600 dark:text-blue-400 font-heading"></p>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Event Date</p>
+              <p id="result-event-date" class="text-sm font-semibold text-slate-800 dark:text-slate-200"></p>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Certificate ID</p>
+              <p id="result-cert-id" class="text-sm font-mono font-bold text-slate-800 dark:text-slate-200"></p>
+            </div>
+            <div class="sm:col-span-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Award / Category</p>
+              <p id="result-category" class="text-sm font-medium text-slate-700 dark:text-slate-300"></p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button id="btn-view-cert" type="button" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                <span>View Certificate</span>
+              </button>
+
+              <button id="btn-download-cert" type="button" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span>Download Certificate</span>
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button id="btn-add-my-cert" type="button" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                <span>Add to My Certificates</span>
+              </button>
+
+              <button id="btn-verify-another" type="button" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5">
+                <span>Verify Another</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- MY CERTIFICATES TAB / SECTION -->
+    <section id="tab-my-certificates" class="tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-20">
+      <div class="mb-10 text-center sm:text-left">
+        <h2 class="reveal-init text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading mb-3">My Certificates</h2>
+        <p class="reveal-init stagger-delay-1 text-slate-600 dark:text-slate-400 text-sm max-w-xl">View and manage your saved authentic event credentials stored locally on your device.</p>
+      </div>
+
+      <!-- Saved Certificates Grid -->
+      <div id="saved-certificates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+      <!-- Empty State -->
+      <div id="saved-certificates-empty-state" class="hidden text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 max-w-md mx-auto">
+        <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-heading mb-1">No certificates saved yet.</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Verify a valid Certificate ID and click "Add to My Certificates" to bookmark credentials here.</p>
+        <a href="#verify" onclick="window.switchTab('verify')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold shadow-md">
+          Go to Verification Portal
+        </a>
+      </div>
+    </section>
+
+    <!-- ABOUT TAB / SECTION -->
+    <section id="tab-about" class="tab-content max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-20">
+      <div class="mb-12 text-center">
+        <h2 class="reveal-init text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading mb-3">About INNOVENTA Platform</h2>
+        <p class="reveal-init stagger-delay-1 text-slate-600 dark:text-slate-400 text-sm max-w-xl mx-auto">Providing competition-ready event management, registration workflows, and cryptographically verified certificate authentication.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="reveal-init stagger-delay-1 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm interactive-card">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white font-heading mb-3">Verification Security</h3>
+          <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+            Every INNOVENTA certificate includes a unique identification credential and issue hash. Recruiters, academic institutions, and contest judges can verify authenticity instantly without relying on paper documents.
+          </p>
+        </div>
+
+        <div class="reveal-init stagger-delay-2 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm interactive-card">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white font-heading mb-3">Fast Client-Side Architecture</h3>
+          <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+            Built with modern HTML5, Tailwind CSS, and ES6+ JavaScript. Storage state is preserved client-side via Browser LocalStorage for instant performance and complete offline capability.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUSTOM 404 TAB -->
+    <section id="tab-404" class="tab-content hidden max-w-md mx-auto px-4 py-20 text-center">
+      <div class="text-6xl font-extrabold text-blue-600 dark:text-blue-400 font-heading mb-4">404</div>
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-2">Page Not Found</h2>
+      <p class="text-slate-600 dark:text-slate-400 text-sm mb-6">The requested section or resource does not exist.</p>
+      <a href="#home" onclick="window.switchTab('home')" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm shadow-md">
+        Back to Home
+      </a>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="reveal-init bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-20 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold font-heading">I</div>
+        <span class="text-sm font-bold text-slate-900 dark:text-white font-heading">INNOVENTA Platform &copy; 2026</span>
+      </div>
+
+      <div class="flex items-center gap-6 text-xs text-slate-500 dark:text-slate-400">
+        <a href="#events" onclick="window.switchTab('events')" class="hover:text-blue-600 transition-colors">Events</a>
+        <a href="#how-it-works" onclick="window.switchTab('how-it-works')" class="hover:text-blue-600 transition-colors">How It Works</a>
+        <a href="#verify" onclick="window.switchTab('verify')" class="hover:text-blue-600 transition-colors">Verification</a>
+        <a href="#my-certificates" onclick="window.switchTab('my-certificates')" class="hover:text-blue-600 transition-colors">My Certificates</a>
+        <a href="#about" onclick="window.switchTab('about')" class="hover:text-blue-600 transition-colors">About</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODALS -->
+
+  <!-- 1. EVENT DETAILS MODAL -->
+  <div id="event-details-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button id="event-details-modal-close" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div id="event-details-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 2. REGISTRATION FORM MODAL -->
+  <div id="registration-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button id="registration-modal-close" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <!-- Form Container -->
+      <div id="reg-form-container">
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-1">Event Registration</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Fill in your details below to complete registration.</p>
+
+        <form id="registration-form" class="space-y-4" novalidate>
+          <div>
+            <label for="reg-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
+            <input id="reg-name" type="text" placeholder="e.g. Rahul Sharma" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900">
+            <p id="reg-name-error" class="text-xs text-rose-500 mt-1 hidden"></p>
+          </div>
+
+          <div>
+            <label for="reg-email" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Email Address *</label>
+            <input id="reg-email" type="email" placeholder="e.g. rahul@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900">
+            <p id="reg-email-error" class="text-xs text-rose-500 mt-1 hidden"></p>
+          </div>
+
+          <div>
+            <label for="reg-college" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">College / Institution *</label>
+            <input id="reg-college" type="text" placeholder="e.g. IIT Delhi" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900">
+            <p id="reg-college-error" class="text-xs text-rose-500 mt-1 hidden"></p>
+          </div>
+
+          <div>
+            <label for="reg-phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Phone Number *</label>
+            <input id="reg-phone" type="tel" placeholder="e.g. 9876543210" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900">
+            <p id="reg-phone-error" class="text-xs text-rose-500 mt-1 hidden"></p>
+          </div>
+
+          <div>
+            <label for="reg-event-select" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Select Event *</label>
+            <select id="reg-event-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900"></select>
+          </div>
+
+          <div class="pt-4">
+            <button type="submit" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md shadow-blue-500/20 transition-all">
+              Submit Registration
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Registration Success Screen -->
+      <div id="reg-success-container" class="hidden text-center py-4">
+        <div class="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-2">Registration Successful!</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">You are successfully registered for this event. A confirmation email has been dispatched to your inbox.</p>
+        <button id="reg-success-btn-close" class="px-6 py-2.5 rounded-xl bg-blue-600 text-white font-semibold text-sm shadow-md">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. SIMULATED QR SCANNER MODAL -->
+  <div id="qr-scanner-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl relative text-center">
+      <button id="qr-scanner-modal-close" class="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <h3 class="text-xl font-bold text-slate-900 dark:text-white font-heading mb-1">Scan Certificate QR</h3>
+      <p class="text-xs text-slate-500 mb-6">Simulated optical scanner camera frame</p>
+
+      <!-- Viewfinder Frame -->
+      <div class="relative w-64 h-64 mx-auto rounded-2xl border-2 border-dashed border-blue-500/80 bg-slate-950 flex items-center justify-center overflow-hidden mb-6">
+        <!-- Laser Scan Line -->
+        <div class="animate-laser"></div>
+        <div class="text-center p-4">
+          <svg class="w-12 h-12 text-blue-400/80 mx-auto mb-2 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+          <span class="text-xs font-mono text-blue-400">Verifying Certificate...</span>
+        </div>
+      </div>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Or tap a sample certificate QR to verify immediately:</p>
+
+      <div id="qr-chip-container" class="flex flex-wrap items-center justify-center gap-2"></div>
+    </div>
+  </div>
+
+  <!-- 4. VISUAL CERTIFICATE PREVIEW MODAL -->
+  <div id="cert-preview-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-3xl w-full p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white font-heading">Official Certificate View</h3>
+        <button id="cert-preview-modal-close" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div id="cert-preview-container" class="mb-6 flex justify-center"></div>
+
+      <div class="flex justify-end gap-3">
+        <button id="cert-preview-download-btn" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download PNG Certificate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast-notification" class="fixed bottom-6 right-6 z-50 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 transition-all duration-300 opacity-0 translate-y-4 hidden">
+    <svg class="w-5 h-5 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toast-message" class="text-xs font-semibold">Action completed successfully</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/certificate.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
