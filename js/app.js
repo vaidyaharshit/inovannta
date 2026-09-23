@@ -483,23 +483,9 @@
     }, { passive: true });
   }
 
-  // Hero Certificate Parallax Effect
+  // Hero Certificate Parallax Effect (Kept static per design specification)
   function initParallaxEffects() {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || window.innerWidth < 768) {
-      return;
-    }
-
-    const heroCert = document.getElementById("hero-certificate-parallax");
-    if (!heroCert) return;
-
-    window.addEventListener("scroll", () => {
-      requestAnimationFrame(() => {
-        const scrolled = window.scrollY;
-        if (scrolled < 800) {
-          heroCert.style.transform = `translateY(${scrolled * 0.08}px)`;
-        }
-      });
-    }, { passive: true });
+    // Certificate hero is kept clean and static
   }
 
   // Events Rendering with Staggered Scroll Reveal
