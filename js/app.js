@@ -367,9 +367,9 @@
   function updateActiveNavLink(tabId) {
     elements.navLinks.forEach(link => {
       if (link.getAttribute("data-tab") === tabId) {
-        link.classList.add("active", "text-blue-600", "dark:text-blue-400", "font-semibold");
+        link.classList.add("active");
       } else {
-        link.classList.remove("active", "text-blue-600", "dark:text-blue-400", "font-semibold");
+        link.classList.remove("active");
       }
     });
   }
