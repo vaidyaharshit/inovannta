@@ -84,33 +84,61 @@ Download PNG      Add to Passport
 
 ## 🛠️ Technology Stack
 
-| Layer | Technologies Used |
-| :--- | :--- |
-| **Frontend Core** | HTML5, Vanilla JavaScript (ES6+ Module Pattern), Vanilla CSS (`css/styles.css`) |
-| **Styling & Design** | Tailwind CSS (CDN with custom brand palette & dark mode configuration) |
-| **Graphics Engine** | Native HTML5 2D Canvas API (High-res 1600x1131 rendering) |
-| **Typography** | Google Fonts (`Inter`, `Outfit`) |
-| **Icons & QR** | Scalable Vector Graphics (SVG) |
-| **Third-Party Libraries** | `canvas-confetti` (v1.6.0 via jsDelivr CDN) |
-| **Data Persistence** | Browser `localStorage` via custom `StorageService` abstraction layer |
-| **Development Tooling**| Node.js, `npx serve` |
+### 🌐 Frontend Core
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript_ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+
+> Semantic markup, modular controller logic, single-page routing, and custom CSS base rules.
+
+### 🎨 Styling & Typography
+
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Google Fonts](https://img.shields.io/badge/Google_Fonts-4285F4?style=for-the-badge&logo=google-fonts&logoColor=white)
+![SVG](https://img.shields.io/badge/SVG-FFB300?style=for-the-badge&logo=svg&logoColor=white)
+
+> Utility-first responsive design, dark/light theme engine, ambient orbs, and `Outfit` / `Inter` typography.
+
+### ⚡ Graphics & Animations
+
+![HTML5 Canvas API](https://img.shields.io/badge/HTML5_Canvas_API-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![Confetti JS](https://img.shields.io/badge/Canvas_Confetti_v1.6.0-F59E0B?style=for-the-badge&logo=javascript&logoColor=black)
+
+> High-resolution 1600x1131 A4 landscape certificate rendering, PNG export engine, and celebratory particle FX.
+
+### 💾 Storage & Data Persistence
+
+![LocalStorage](https://img.shields.io/badge/Browser_LocalStorage-000000?style=for-the-badge&logo=json&logoColor=white)
+
+> Client-side data management (`StorageService`) persisting user preferences, registrations, and saved credentials across sessions.
+
+### 🔧 Development & Tooling
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+
+> Local server tooling and scripts for rapid development environment execution (`npx serve`).
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```text
-inovanta/
-├── css/
-│   └── styles.css          # Custom CSS, keyframe animations, ambient orbs, scrollbar styles
-├── js/
-│   ├── app.js              # Core application controller, SPA routing, state management, modal logic
-│   ├── certificate.js      # HTML5 Canvas dynamic certificate generator & PNG export service
-│   ├── data.js             # Initial seed data for events and sample verified certificates
-│   └── storage.js          # LocalStorage service managing themes, registrations, and saved passport certs
-├── index.html              # Main HTML5 SPA structure, templates, and modal markups
-├── package.json            # Node.js dev server scripts
-└── README.md               # Project documentation
+INNOVENTA/
+│
+├── 📁 css/
+│   └── 🎨 styles.css          # Custom styling, dark mode overrides, ambient floaters & keyframe animations
+│
+├── 📁 js/
+│   ├── ⚙️ app.js              # Core SPA controller, tab router, modal handlers & verification flow
+│   ├── 📜 certificate.js      # Dynamic HTML5 Canvas certificate renderer & PNG export engine
+│   ├── 🗃️ data.js             # Initial sample dataset for events and verified certificates
+│   └── 💾 storage.js          # LocalStorage service managing themes, event registrations & passport items
+│
+├── 📄 index.html              # Main HTML5 SPA structure, navigation header & modal dialog templates
+├── 📦 package.json            # Node.js project metadata and development server launch scripts
+└── 📘 README.md               # Technical project documentation
 ```
 
 ---
