@@ -77,8 +77,9 @@
       <!-- Desktop Navigation Links -->
       <nav class="hidden md:flex items-center gap-1.5 lg:gap-2">
         <a href="#events" data-tab="events" class="nav-link">Events</a>
-        <a href="#why-innoventa" data-tab="why-innoventa" class="nav-link">Why Us</a>
+        <a href="#registered-events" data-tab="registered-events" class="nav-link">Registered Events</a>
         <a href="#journey" data-tab="journey" class="nav-link">Journey</a>
+        <a href="#generate-cert" data-tab="generate-cert" class="nav-link">Generate Certificate</a>
         <a href="#verify" data-tab="verify" class="nav-link">
           <span>Verify Certificate</span>
           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/80">
@@ -122,8 +123,12 @@
 
         <nav class="flex flex-col gap-4 mt-6">
           <a href="#events" data-tab="events" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50">Explore Events</a>
-          <a href="#why-innoventa" data-tab="why-innoventa" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50">Why INNOVENTA</a>
+          <a href="#registered-events" data-tab="registered-events" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50">Registered Events</a>
           <a href="#journey" data-tab="journey" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50">Achievement Journey</a>
+          <a href="#generate-cert" data-tab="generate-cert" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50 flex items-center justify-between">
+            <span>Generate Certificate</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-semibold">New</span>
+          </a>
           <a href="#verify" data-tab="verify" class="mobile-nav-link text-base font-medium text-slate-700 dark:text-slate-200 py-2 border-b border-slate-100 dark:border-slate-800/50 flex items-center justify-between">
             <span>Verify Certificate</span>
             <span class="text-xs px-2 py-0.5 rounded-full bg-teal-100 dark:bg-teal-950 text-teal-600 dark:text-teal-400 font-semibold">Instant</span>
@@ -222,52 +227,27 @@
         </div>
       </div>
 
-      <!-- TRUST & VERIFICATION SECTION: WHY INNOVENTA -->
-      <div id="why-innoventa-section" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-200/60 dark:border-slate-800/60 scroll-mt-20">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-          <span class="reveal-init text-xs font-extrabold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-2 block">Platform Architecture</span>
-          <h2 class="reveal-init stagger-delay-1 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading mb-4">Why INNOVENTA?</h2>
-          <p class="reveal-init stagger-delay-2 text-slate-600 dark:text-slate-400 text-sm sm:text-base">Designed for competition hosts, participants, recruiters, and contest judges requiring instant cryptographic validation.</p>
+      <!-- REGISTERED EVENTS SECTION -->
+      <div id="registered-events-section" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-200/60 dark:border-slate-800/60 scroll-mt-20">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="reveal-init text-xs font-extrabold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-2 block">Personal Event Schedule</span>
+          <h2 class="reveal-init stagger-delay-1 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading mb-4">YOUR REGISTERED EVENTS</h2>
+          <p class="reveal-init stagger-delay-2 text-slate-600 dark:text-slate-400 text-sm sm:text-base">Keep track of the events you've registered for and access your certificates when they're ready.</p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          
-          <!-- Trust Card 1 -->
-          <div class="reveal-init stagger-delay-1 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 interactive-card">
-            <div class="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-5 text-xl font-bold">
-              🔐
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 font-heading">Secure Verification</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Every certificate features a unique identification credential and issue hash to prevent forgery.</p>
-          </div>
+        <!-- Registered Events Grid Container -->
+        <div id="registered-events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-          <!-- Trust Card 2 -->
-          <div class="reveal-init stagger-delay-2 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 interactive-card">
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-5 text-xl font-bold">
-              📱
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 font-heading">QR Verification</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Scan QR codes with any mobile device camera to load authenticity records instantly.</p>
+        <!-- Registered Events Empty State -->
+        <div id="registered-events-empty-state" class="hidden text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-md mx-auto shadow-sm">
+          <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+            📅
           </div>
-
-          <!-- Trust Card 3 -->
-          <div class="reveal-init stagger-delay-3 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 interactive-card">
-            <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-5 text-xl font-bold">
-              🏆
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 font-heading">Achievement Passport</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Organize, manage, and bookmark all your verified event credentials in a client-side digital wallet.</p>
-          </div>
-
-          <!-- Trust Card 4 -->
-          <div class="reveal-init stagger-delay-4 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 interactive-card">
-            <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-5 text-xl font-bold">
-              ⚡
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 font-heading">Instant Search</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Query certificate IDs or participant names in milliseconds with zero backend latency.</p>
-          </div>
-
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white font-heading mb-1">No registered events yet</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Explore upcoming events and register to see them here.</p>
+          <button onclick="window.switchTab('events')" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all">
+            Explore Events →
+          </button>
         </div>
       </div>
 
@@ -379,6 +359,189 @@
         <h3 class="text-lg font-bold text-slate-900 dark:text-white font-heading mb-1">No events found.</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400">Try adjusting your search criteria or selecting a different category filter.</p>
       </div>
+    </section>
+
+    <!-- CERTIFICATE GENERATION TAB / SECTION -->
+    <section id="tab-generate-cert" class="tab-content max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-20">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <div class="reveal-init inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 text-xs font-semibold mb-3">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          Participant Credentials Portal
+        </div>
+        <h2 class="reveal-init stagger-delay-1 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading mb-3">Generate Your Certificate</h2>
+        <p class="reveal-init stagger-delay-2 text-slate-600 dark:text-slate-400 text-sm sm:text-base">Select your event and verify your registered email to generate your official certificate.</p>
+        
+        <!-- Helpful Guidance Note -->
+        <div class="mt-4 p-3 rounded-2xl bg-blue-50/80 dark:bg-blue-950/50 border border-blue-200/60 dark:border-blue-800/60 text-xs text-blue-800 dark:text-blue-300 flex items-center justify-center gap-2">
+          <span>💡</span>
+          <span><strong>Already registered for an event?</strong> Select your event below and enter the email address you used during registration.</span>
+        </div>
+      </div>
+
+      <!-- 4-Step Visual Progress Indicator -->
+      <div class="mb-10 max-w-3xl mx-auto">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-semibold">
+          <div id="step-ind-1" class="p-2.5 rounded-xl bg-blue-600 text-white shadow-sm border border-blue-600 transition-colors">
+            <span class="block text-[10px] uppercase tracking-wider opacity-80">Step 1</span>
+            <span>① Select Event</span>
+          </div>
+          <div id="step-ind-2" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition-colors">
+            <span class="block text-[10px] uppercase tracking-wider opacity-70">Step 2</span>
+            <span>② Verify Email</span>
+          </div>
+          <div id="step-ind-3" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition-colors">
+            <span class="block text-[10px] uppercase tracking-wider opacity-70">Step 3</span>
+            <span>③ Generate</span>
+          </div>
+          <div id="step-ind-4" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition-colors">
+            <span class="block text-[10px] uppercase tracking-wider opacity-70">Step 4</span>
+            <span>④ Download & Verify</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Portal Container -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-xl max-w-2xl mx-auto relative overflow-hidden">
+        
+        <!-- FORM / SELECTION UI -->
+        <div id="gen-form-container" class="space-y-6">
+          
+          <!-- Step 1: Select Event -->
+          <div>
+            <label for="gen-event-select" class="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">
+              01. Select Event *
+            </label>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Choose the event you registered for.</p>
+            <select id="gen-event-select" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-colors cursor-pointer">
+              <option value="">-- Select an Event --</option>
+            </select>
+          </div>
+
+          <!-- Event Preview Card (Hidden until an event is selected) -->
+          <div id="gen-event-preview" class="hidden p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-800/60 transition-all">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <span id="gen-preview-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 uppercase">Competition</span>
+                <h4 id="gen-preview-title" class="text-base font-bold text-slate-900 dark:text-white font-heading mt-1">Tech Tank 2026</h4>
+                <p id="gen-preview-date" class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">📅 15 September 2026 • 10:00 AM IST</p>
+                <p id="gen-preview-organizer" class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Hosted by INNOVENTA Entrepreneurship Cell</p>
+              </div>
+              <span class="text-teal-600 dark:text-teal-400 text-xs font-semibold flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Selected
+              </span>
+            </div>
+          </div>
+
+          <!-- Step 2: Registered Email -->
+          <div>
+            <label for="gen-email-input" class="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">
+              02. Registered Email Address *
+            </label>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Enter the same email address you used while registering for this event.</p>
+            <input id="gen-email-input" type="email" disabled placeholder="e.g. rahul.sharma@example.com" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50 text-slate-900 dark:text-white text-sm focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+            <p id="gen-email-error" class="hidden text-xs text-rose-500 mt-1.5 font-semibold flex items-center gap-1"></p>
+          </div>
+
+          <!-- Action Button -->
+          <div>
+            <button id="btn-verify-generate" type="button" disabled class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Verify & Generate Certificate</span>
+            </button>
+          </div>
+
+          <!-- Demo Quick Tip Box -->
+          <div class="pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
+            <span class="font-bold text-slate-700 dark:text-slate-300">Quick Test Tip:</span> Try demo registration email <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-mono">rahul.sharma@example.com</code> for <em>Tech Tank 2026</em>, or register for an event first.
+          </div>
+
+        </div>
+
+        <!-- LOADING STATE UI (1-2s animated progress) -->
+        <div id="gen-loading-state" class="hidden text-center py-10">
+          <div class="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center mx-auto mb-4 relative overflow-hidden">
+            <svg class="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+            </svg>
+          </div>
+          <h3 id="gen-loading-text" class="text-lg font-bold text-slate-900 dark:text-white font-heading">Verifying Registration...</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Checking cryptographic event participation registry</p>
+        </div>
+
+        <!-- SUCCESS STATE UI -->
+        <div id="gen-success-state" class="hidden space-y-6">
+          <div class="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200/70 dark:border-teal-800/70 text-center">
+            <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/80 text-teal-600 dark:text-teal-300 flex items-center justify-center mx-auto mb-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-teal-900 dark:text-teal-200 font-heading">✓ Registration Verified</h3>
+            <p id="gen-success-event-msg" class="text-xs text-teal-700 dark:text-teal-400 mt-1">We found your registration record for Tech Tank 2026.</p>
+            <p id="gen-masked-email" class="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-2">Registered Email: r*****a@example.com</p>
+          </div>
+
+          <div class="text-center">
+            <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest block mb-1">🎓 Certificate Ready!</span>
+            <h4 id="gen-cert-participant" class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">Rahul Sharma</h4>
+            <p id="gen-cert-details" class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Tech Tank 2026 • Issued: 15 September 2026</p>
+            <p id="gen-cert-id-badge" class="font-mono text-xs text-slate-500 mt-1 font-semibold">INNOVENTA-2026-001</p>
+          </div>
+
+          <!-- Actions -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <button id="gen-btn-view" type="button" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <span>View Certificate</span>
+            </button>
+
+            <button id="gen-btn-download" type="button" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Download Certificate</span>
+            </button>
+
+            <button id="gen-btn-passport" type="button" class="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+              <span>Add to My Passport</span>
+            </button>
+
+            <button id="gen-btn-verify-flow" type="button" class="px-4 py-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-600 hover:text-white text-teal-600 dark:text-teal-400 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Verify Certificate</span>
+            </button>
+          </div>
+
+          <div class="text-center pt-2">
+            <button id="gen-btn-another" type="button" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+              Generate Another Certificate →
+            </button>
+          </div>
+        </div>
+
+        <!-- ERROR STATE UI -->
+        <div id="gen-error-state" class="hidden p-6 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-center space-y-4">
+          <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-amber-900 dark:text-amber-200 font-heading">❌ Registration Not Found</h3>
+            <p class="text-xs text-amber-700 dark:text-amber-300 mt-1">We couldn't find a registration for this email and event.</p>
+          </div>
+          
+          <div class="text-left text-xs text-amber-800 dark:text-amber-300 bg-amber-100/60 dark:bg-amber-900/40 p-3 rounded-xl space-y-1">
+            <p class="font-semibold">Please check that:</p>
+            <p>• You selected the correct event</p>
+            <p>• You entered the exact email used during registration</p>
+          </div>
+
+          <button id="gen-btn-try-again" type="button" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors shadow-sm">
+            Try Again
+          </button>
+        </div>
+
+      </div>
+
     </section>
 
     <!-- CERTIFICATE VERIFICATION TAB / SECTION -->
@@ -682,7 +845,7 @@
 
       <div class="flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400">
         <a href="#events" onclick="window.switchTab('events')" class="hover:text-blue-600 transition-colors">Events</a>
-        <a href="#why-innoventa" onclick="window.switchTab('why-innoventa')" class="hover:text-blue-600 transition-colors">Why Us</a>
+        <a href="#registered-events" onclick="window.switchTab('registered-events')" class="hover:text-blue-600 transition-colors">Registered Events</a>
         <a href="#journey" onclick="window.switchTab('journey')" class="hover:text-blue-600 transition-colors">Journey</a>
         <a href="#verify" onclick="window.switchTab('verify')" class="hover:text-blue-600 transition-colors">Verification</a>
         <a href="#my-certificates" onclick="window.switchTab('my-certificates')" class="hover:text-blue-600 transition-colors">Passport</a>
@@ -754,15 +917,24 @@
       </div>
 
       <!-- Registration Success Screen -->
-      <div id="reg-success-container" class="hidden text-center py-4">
-        <div class="w-14 h-14 rounded-full bg-teal-100 dark:bg-teal-900/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-4">
+      <div id="reg-success-container" class="hidden text-center py-4 space-y-4">
+        <div class="w-14 h-14 rounded-full bg-teal-100 dark:bg-teal-900/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
         </div>
-        <h3 class="text-2xl font-bold text-slate-900 dark:text-white font-heading mb-2">Registration Successful!</h3>
-        <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">You are successfully registered for this event. A confirmation email has been dispatched to your inbox.</p>
-        <button id="reg-success-btn-close" class="px-6 py-2.5 rounded-xl bg-blue-600 text-white font-semibold text-sm shadow-md">
-          Done
-        </button>
+        <div>
+          <h3 class="text-2xl font-bold text-slate-900 dark:text-white font-heading">Registration Successful!</h3>
+          <p id="reg-success-msg" class="text-sm text-slate-600 dark:text-slate-300 mt-1">You are successfully registered for this event. Your registered event has been added to Registered Events.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <button id="reg-success-btn-view-registered" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span>View Registered Events</span>
+          </button>
+          <button id="reg-success-btn-close" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-colors">
+            Done
+          </button>
+        </div>
       </div>
     </div>
   </div>
