@@ -11,6 +11,7 @@
     savedCertificates: [],
     searchQuery: "",
     categoryFilter: "All",
+    passportCategoryFilter: "All",
     activeEvent: null,
     verifiedCert: null,
     verificationState: "idle", // 'idle' | 'searching' | 'verified' | 'invalid' | 'empty'
@@ -52,6 +53,9 @@
     initHowItWorksLineObserver();
     initParallaxEffects();
     initScrollSpy();
+
+    // Check for URL / Hash Query Parameter ID (e.g. #verify?id=INNOVENTA-2026-001)
+    checkUrlForVerificationId();
   }
 
   function cacheElements() {
@@ -82,6 +86,7 @@
       // Verification Result Area
       verificationStateIdle: document.getElementById("verification-state-idle"),
       verificationStateSearching: document.getElementById("verification-state-searching"),
+      searchingStepText: document.getElementById("searching-step-text"),
       verificationStateResult: document.getElementById("verification-state-result"),
       verificationStateInvalid: document.getElementById("verification-state-invalid"),
       verificationStateEmpty: document.getElementById("verification-state-empty"),
@@ -93,6 +98,7 @@
       resultCertId: document.getElementById("result-cert-id"),
       resultCategory: document.getElementById("result-category"),
       resultStatusBadge: document.getElementById("result-status-badge"),
+      resultQrCodeContainer: document.getElementById("result-qr-code-container"),
       
       // Verification Action Buttons
       btnViewCert: document.getElementById("btn-view-cert"),
@@ -101,10 +107,13 @@
       btnVerifyAnother: document.getElementById("btn-verify-another"),
       btnVerifyAnotherInvalid: document.getElementById("btn-verify-another-invalid"),
 
-      // My Certificates Section
+      // Passport Section
       savedCertificatesGrid: document.getElementById("saved-certificates-grid"),
       savedCertificatesEmptyState: document.getElementById("saved-certificates-empty-state"),
       savedCertCountBadge: document.getElementById("saved-cert-count-badge"),
+      passportCategoryFilters: document.getElementById("passport-category-filters"),
+      statCertCount: document.getElementById("stat-cert-count"),
+      statEventCount: document.getElementById("stat-event-count"),
 
       // Modals
       eventDetailsModal: document.getElementById("event-details-modal"),
@@ -126,6 +135,7 @@
       certPreviewModal: document.getElementById("cert-preview-modal"),
       certPreviewModalClose: document.getElementById("cert-preview-modal-close"),
       certPreviewContainer: document.getElementById("cert-preview-container"),
+      certPreviewVerifyBtn: document.getElementById("cert-preview-verify-btn"),
       certPreviewDownloadBtn: document.getElementById("cert-preview-download-btn"),
 
       // Toasts
@@ -164,7 +174,7 @@
       });
     });
 
-    // Search and Filters
+    // Search and Category Filters
     elements.eventSearchInput.addEventListener("input", (e) => {
       state.searchQuery = e.target.value.toLowerCase().trim();
       renderEvents();
@@ -177,7 +187,6 @@
         const category = btn.getAttribute("data-category");
         if (category) {
           state.categoryFilter = category;
-          // Update active filter button styling
           const buttons = elements.eventCategoryFilters.querySelectorAll("button");
           buttons.forEach(b => {
             b.classList.remove("bg-blue-600", "text-white", "shadow-sm");
@@ -186,6 +195,26 @@
           btn.classList.remove("bg-white", "dark:bg-slate-900", "text-slate-700", "dark:text-slate-300", "border", "border-slate-200", "dark:border-slate-800");
           btn.classList.add("bg-blue-600", "text-white", "shadow-sm");
           renderEvents();
+        }
+      });
+    }
+
+    // Passport Category Filters
+    if (elements.passportCategoryFilters) {
+      elements.passportCategoryFilters.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        const category = btn.getAttribute("data-passport-category");
+        if (category) {
+          state.passportCategoryFilter = category;
+          const buttons = elements.passportCategoryFilters.querySelectorAll("button");
+          buttons.forEach(b => {
+            b.classList.remove("bg-blue-600", "text-white", "shadow-sm");
+            b.classList.add("bg-white", "dark:bg-slate-900", "text-slate-700", "dark:text-slate-300", "border", "border-slate-200", "dark:border-slate-800");
+          });
+          btn.classList.remove("bg-white", "dark:bg-slate-900", "text-slate-700", "dark:text-slate-300", "border", "border-slate-200", "dark:border-slate-800");
+          btn.classList.add("bg-blue-600", "text-white", "shadow-sm");
+          renderSavedCertificates();
         }
       });
     }
@@ -230,9 +259,9 @@
         updateSavedCountBadge();
         updateAddCertButtonState();
         if (added) {
-          showToast("Added to My Certificates!");
+          showToast("Added to My Passport!");
         } else {
-          showToast("Certificate is already in your list.");
+          showToast("Certificate is already in your Passport.");
         }
       }
     });
@@ -258,6 +287,59 @@
     elements.registrationForm.addEventListener("submit", handleRegistrationSubmit);
   }
 
+  // Standalone Vector SVG QR Code Generator Helper
+  function generateSvgQr(certId, size = 70) {
+    const qrGrid = [
+      [1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1],
+      [1,0,1,1,1,0,1,0,1,1,0,0,1,0,1,1,1,0,1],
+      [1,0,1,1,1,0,1,0,0,1,1,0,1,0,1,1,1,0,1],
+      [1,0,1,1,1,0,1,0,1,0,0,0,1,0,1,1,1,0,1],
+      [1,0,0,0,0,0,1,0,1,1,1,0,1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],
+      [0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0],
+      [1,1,0,1,0,1,1,0,1,1,1,0,1,1,0,1,0,1,1],
+      [1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1],
+      [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],
+      [0,0,0,0,0,0,0,1,1,1,0,1,0,0,0,0,0,0,0],
+      [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,1,0,1,1,0,1,1,0,0,0,0,0,1],
+      [1,0,1,1,1,0,1,0,0,1,1,0,1,0,1,1,1,0,1],
+      [1,0,1,1,1,0,1,0,1,0,0,1,1,0,1,1,1,0,1],
+      [1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1],
+      [1,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1]
+    ];
+    const count = qrGrid.length;
+    const cellSize = size / count;
+    let rects = '';
+    for (let r = 0; r < count; r++) {
+      for (let c = 0; c < count; c++) {
+        if (qrGrid[r][c] === 1) {
+          rects += `<rect x="${(c * cellSize).toFixed(2)}" y="${(r * cellSize).toFixed(2)}" width="${cellSize.toFixed(2)}" height="${cellSize.toFixed(2)}" fill="#0f172a" />`;
+        }
+      }
+    }
+    return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" class="select-none">${rects}</svg>`;
+  }
+
+  // Check URL / Hash for direct verification links
+  function checkUrlForVerificationId() {
+    const searchParams = new URLSearchParams(window.location.search);
+    let certId = searchParams.get("id");
+    
+    if (!certId && window.location.hash.includes("id=")) {
+      const match = window.location.hash.match(/id=([^&]+)/);
+      if (match) certId = match[1];
+    }
+
+    if (certId) {
+      elements.certIdInput.value = certId;
+      switchTab("verify");
+      performVerification(certId);
+    }
+  }
+
   // Router / Hash Navigation & Smooth Scroll to Section
   function switchTab(tabId, updateHash = true) {
     state.currentTab = tabId;
@@ -269,8 +351,10 @@
 
     // Find section element by tab ID or anchor ID
     let targetSection = document.getElementById(`tab-${tabId}`);
-    if (!targetSection && tabId === "how-it-works") {
-      targetSection = document.getElementById("how-it-works-section");
+    if (!targetSection && tabId === "why-innoventa") {
+      targetSection = document.getElementById("why-innoventa-section");
+    } else if (!targetSection && tabId === "journey") {
+      targetSection = document.getElementById("journey-section");
     } else if (!targetSection && tabId === "home") {
       targetSection = document.getElementById("hero-section");
     }
@@ -357,8 +441,9 @@
   function initScrollSpy() {
     const sections = [
       { id: "hero-section", tab: "home" },
+      { id: "why-innoventa-section", tab: "why-innoventa" },
+      { id: "journey-section", tab: "journey" },
       { id: "tab-events", tab: "events" },
-      { id: "how-it-works-section", tab: "how-it-works" },
       { id: "tab-verify", tab: "verify" },
       { id: "tab-my-certificates", tab: "my-certificates" },
       { id: "tab-about", tab: "about" }
@@ -378,10 +463,10 @@
     }, { passive: true });
   }
 
-  // How It Works Line Observer
+  // How It Works / Journey Line Observer
   function initHowItWorksLineObserver() {
     const line = document.getElementById("how-it-works-line");
-    const section = document.getElementById("how-it-works-section");
+    const section = document.getElementById("journey-section");
     if (!line || !section) return;
 
     window.addEventListener("scroll", () => {
@@ -459,7 +544,7 @@
 
             <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full ${evt.registrationStatus === 'Open' ? 'bg-emerald-500' : evt.registrationStatus === 'Closing Soon' ? 'bg-amber-500' : 'bg-slate-400'}"></span>
+                <span class="w-2 h-2 rounded-full ${evt.registrationStatus === 'Open' ? 'bg-teal-500' : evt.registrationStatus === 'Closing Soon' ? 'bg-amber-500' : 'bg-slate-400'}"></span>
                 <span class="text-xs font-medium text-slate-500 dark:text-slate-400">${evt.registrationStatus}</span>
               </div>
               
@@ -517,7 +602,7 @@
           </div>
 
           <div class="flex items-start gap-3">
-            <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+            <div class="p-2 rounded-lg bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
             </div>
             <div>
@@ -657,7 +742,7 @@
     }
   }
 
-  // Certificate Verification Workflow
+  // Enhanced Certificate Verification Workflow with Multi-Step Scanning Animation
   function performVerification(certId) {
     const trimmedId = certId.trim().toUpperCase();
     state.verificationInput = trimmedId;
@@ -667,8 +752,24 @@
       return;
     }
 
-    // Show Loading state
+    // Show Animated Scanning State
     setVerificationState("searching");
+
+    // Animated Step progression over 1.8 seconds
+    if (elements.searchingStepText) {
+      elements.searchingStepText.textContent = "Scanning Certificate ID...";
+      setTimeout(() => {
+        if (state.verificationState === "searching" && elements.searchingStepText) {
+          elements.searchingStepText.textContent = "Checking Certificate...";
+        }
+      }, 600);
+
+      setTimeout(() => {
+        if (state.verificationState === "searching" && elements.searchingStepText) {
+          elements.searchingStepText.textContent = "Validating Details...";
+        }
+      }, 1200);
+    }
 
     setTimeout(() => {
       const match = state.certificates.find(c => c.certificateId.toUpperCase() === trimmedId);
@@ -681,7 +782,7 @@
         state.verifiedCert = null;
         setVerificationState("invalid");
       }
-    }, 750);
+    }, 1800);
   }
 
   function setVerificationState(stateName) {
@@ -703,6 +804,12 @@
       elements.resultEventDate.textContent = state.verifiedCert.eventDate;
       elements.resultCertId.textContent = state.verifiedCert.certificateId;
       elements.resultCategory.textContent = state.verifiedCert.issueCategory || "Certificate Verified";
+      
+      // Inject SVG QR code with "Scan to Verify" label
+      if (elements.resultQrCodeContainer) {
+        elements.resultQrCodeContainer.innerHTML = generateSvgQr(state.verifiedCert.certificateId, 72);
+      }
+
       elements.verificationStateResult.classList.remove("hidden");
     } else if (stateName === "invalid") {
       elements.verificationStateInvalid.classList.remove("hidden");
@@ -724,14 +831,14 @@
     const isSaved = window.StorageService.isCertificateSaved(state.verifiedCert.certificateId);
     if (isSaved) {
       elements.btnAddMyCert.innerHTML = `
-        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        Saved in My Certificates
+        <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        Saved in Passport
       `;
       elements.btnAddMyCert.classList.add("opacity-80");
     } else {
       elements.btnAddMyCert.innerHTML = `
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-        Add to My Certificates
+        Add to My Passport
       `;
       elements.btnAddMyCert.classList.remove("opacity-80");
     }
@@ -741,7 +848,8 @@
   function openQrScannerModal() {
     // Populate sample chips
     elements.qrChipContainer.innerHTML = state.certificates.map(c => `
-      <button onclick="window.appSelectQrCert('${c.certificateId}')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors">
+      <button onclick="window.appSelectQrCert('${c.certificateId}')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
         ${c.certificateId} (${c.participantName})
       </button>
     `).join("");
@@ -769,6 +877,13 @@
     canvas.classList.add("rounded-lg", "shadow-xl", "border", "border-slate-200", "dark:border-slate-700");
     elements.certPreviewContainer.appendChild(canvas);
 
+    elements.certPreviewVerifyBtn.onclick = () => {
+      elements.certPreviewModal.classList.add("hidden");
+      elements.certIdInput.value = cert.certificateId;
+      switchTab("verify");
+      performVerification(cert.certificateId);
+    };
+
     elements.certPreviewDownloadBtn.onclick = () => {
       window.CertificateExporter.download(cert);
       showToast("Certificate downloaded successfully!");
@@ -777,10 +892,19 @@
     elements.certPreviewModal.classList.remove("hidden");
   }
 
-  // My Certificates Section Rendering with Stagger
+  // Passport Section Rendering with Stagger & Category Filtering
   function renderSavedCertificates() {
     if (!elements.savedCertificatesGrid) return;
-    const saved = state.savedCertificates;
+    let saved = state.savedCertificates;
+
+    if (state.passportCategoryFilter && state.passportCategoryFilter !== "All") {
+      saved = saved.filter(c => c.eventName.toLowerCase().includes(state.passportCategoryFilter.toLowerCase()));
+    }
+
+    // Update Counter Stats
+    if (elements.statCertCount) {
+      elements.statCertCount.textContent = String(state.savedCertificates.length).padStart(2, '0');
+    }
 
     if (saved.length === 0) {
       elements.savedCertificatesGrid.classList.add("hidden");
@@ -793,22 +917,38 @@
         <div class="reveal-init stagger-delay-${(idx % 4) + 1} bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm interactive-card flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 border border-teal-200/50 dark:border-teal-800/50">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 Verified
               </span>
               <span class="font-mono text-xs text-slate-500 dark:text-slate-400">${cert.certificateId}</span>
             </div>
 
-            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-1 font-heading">${cert.participantName}</h3>
-            <p class="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-2">${cert.eventName}</p>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Issued: ${cert.eventDate}</p>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-1 font-heading">${cert.participantName}</h3>
+                <p class="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-1">${cert.eventName}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Issued: ${cert.eventDate}</p>
+              </div>
+
+              <!-- Interactive QR Code for Card -->
+              <div onclick="window.appSelectQrCert('${cert.certificateId}')" class="flex flex-col items-center cursor-pointer group/qr p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 hover:border-blue-500 transition-colors">
+                <div class="w-14 h-14 bg-white p-1 rounded-lg shadow-2xs flex items-center justify-center">
+                  ${generateSvgQr(cert.certificateId, 50)}
+                </div>
+                <span class="text-[9px] font-bold text-slate-500 group-hover/qr:text-blue-600 mt-1 uppercase tracking-tighter">Scan to Verify</span>
+              </div>
+            </div>
           </div>
 
           <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
               <button onclick="window.appViewSavedCert('${cert.certificateId}')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors">
                 View
+              </button>
+              <button onclick="window.appVerifySavedCert('${cert.certificateId}')" class="px-3 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-600 hover:text-white text-teal-600 dark:text-teal-400 text-xs font-semibold transition-colors flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Verify
               </button>
               <button onclick="window.appDownloadSavedCert('${cert.certificateId}')" class="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-600 hover:text-white text-blue-600 dark:text-blue-400 text-xs font-semibold transition-colors">
                 Download
@@ -837,6 +977,12 @@
     if (cert) openCertPreviewModal(cert);
   };
 
+  window.appVerifySavedCert = function (certId) {
+    elements.certIdInput.value = certId;
+    switchTab("verify");
+    performVerification(certId);
+  };
+
   window.appDownloadSavedCert = function (certId) {
     const cert = state.savedCertificates.find(c => c.certificateId === certId);
     if (cert) {
@@ -852,7 +998,7 @@
     showToast("Certificate removed from list.");
   };
 
-  // Celebration Confetti Effect
+  // Celebration Confetti Effect (1.5s professional burst)
   function triggerConfettiCelebration() {
     if (typeof confetti === "function") {
       confetti({
