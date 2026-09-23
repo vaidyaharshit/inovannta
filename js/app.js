@@ -669,71 +669,74 @@
     }
     elements.registeredEventsGrid.classList.remove("hidden");
 
-    const cardsHtml = registrations.map(reg => {
+    const cardsHtml = registrations.map((reg, idx) => {
       const evt = state.events.find(e => e.id === reg.eventId) || {
         name: reg.eventName || "Registered Event",
         type: "Tech Event",
-        date: "15 September 2026",
-        image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80"
+        category: "Technology",
+        date: "15 September 2026"
       };
 
+      const isCertGenerated = state.certificates.some(c =>
+        (c.registeredEmail && c.registeredEmail.toLowerCase() === reg.email.toLowerCase() && c.eventName.toLowerCase() === (evt.name || "").toLowerCase()) ||
+        c.certificateId === reg.certificateId
+      );
+
+      const staggerClass = `stagger-delay-${(idx % 4) + 1}`;
+
       return `
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group border-l-4 border-l-teal-500">
-          <div class="relative h-44 overflow-hidden bg-slate-100 dark:bg-slate-800">
-            <img src="${evt.image}" alt="${evt.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
-            <div class="absolute top-3 right-3">
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white backdrop-blur-md shadow-sm">
+        <div class="reveal-init ${staggerClass} bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-3xl p-6 flex flex-col justify-between interactive-card shadow-sm">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/50">
+                ${evt.type || evt.category || "Event"}
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                 Registered
               </span>
             </div>
-            <div class="absolute bottom-3 left-4 right-4 flex items-center justify-between">
-              <span class="text-xs font-semibold uppercase tracking-wider text-teal-300">${evt.type || "Event"}</span>
-              <span class="text-[11px] font-medium text-slate-300 bg-slate-900/60 backdrop-blur-md px-2 py-0.5 rounded">${evt.category || "General"}</span>
+            
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-1.5 line-clamp-1 font-heading">${evt.name}</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mb-4">
+              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span>${evt.date}</span>
+            </p>
+            
+            <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 text-xs space-y-2 mb-6">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">Participant:</span>
+                <span class="font-semibold text-slate-900 dark:text-white truncate max-w-[170px]">${reg.fullName}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">Registered Email:</span>
+                <span class="font-mono text-slate-700 dark:text-slate-300 truncate max-w-[170px]">${reg.email}</span>
+              </div>
+              ${reg.college ? `
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">Institution:</span>
+                <span class="text-slate-700 dark:text-slate-300 truncate max-w-[170px]">${reg.college}</span>
+              </div>` : ''}
             </div>
           </div>
           
-          <div class="p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-teal-400 transition-colors line-clamp-1">${evt.name}</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5">
-                <span>📅 ${evt.date}</span>
-              </p>
-              
-              <div class="mt-4 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 space-y-1">
-                <div class="flex justify-between items-center">
-                  <span class="text-slate-400">Participant:</span>
-                  <span class="font-semibold text-slate-900 dark:text-white truncate max-w-[160px]">${reg.fullName}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-slate-400">Registered Email:</span>
-                  <span class="font-mono text-slate-700 dark:text-slate-300 truncate max-w-[160px]">${reg.email}</span>
-                </div>
-                ${reg.college ? `
-                <div class="flex justify-between items-center">
-                  <span class="text-slate-400">Institution:</span>
-                  <span class="text-slate-700 dark:text-slate-300 truncate max-w-[160px]">${reg.college}</span>
-                </div>` : ''}
-              </div>
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+              <span class="w-2 h-2 rounded-full ${isCertGenerated ? 'bg-teal-500' : 'bg-emerald-500'}"></span>
+              <span>Certificate Status: <strong class="text-slate-800 dark:text-slate-200 font-semibold">${isCertGenerated ? 'Generated' : 'Available'}</strong></span>
             </div>
             
-            <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-teal-500"></span>
-                <span>Certificate Status: <strong class="text-slate-800 dark:text-slate-200 font-semibold">Available</strong></span>
-              </div>
-              <button onclick="window.openGenerateCertPortal('${reg.eventId}', '${reg.email}')" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white transition-colors shadow-sm flex items-center gap-1.5">
-                Generate Certificate
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-              </button>
-            </div>
+            <button onclick="window.openGenerateCertPortal('${reg.eventId}', '${reg.email}')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white text-xs font-bold transition-all duration-200 shadow-sm group">
+              <span>${isCertGenerated ? 'View Certificate' : 'Generate Certificate'}</span>
+              <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
           </div>
         </div>
       `;
     }).join("");
 
     elements.registeredEventsGrid.innerHTML = cardsHtml;
+    setTimeout(initScrollReveal, 50);
   }
 
   // Event Details Modal
