@@ -41,10 +41,6 @@
     // Bind Event Listeners
     bindEvents();
 
-    // Handle Route / Hash Navigation
-    handleHashChange();
-    window.addEventListener("hashchange", handleHashChange);
-
     // Initial Renders
     renderEvents();
     renderSavedCertificates();
@@ -55,6 +51,7 @@
     initScrollReveal();
     initHowItWorksLineObserver();
     initParallaxEffects();
+    initScrollSpy();
   }
 
   function cacheElements() {
@@ -149,7 +146,7 @@
       elements.mobileMenuDrawer.classList.add("hidden");
     });
 
-    // Navigation Links
+    // Navigation Links Smooth Scroll
     elements.navLinks.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
@@ -261,24 +258,29 @@
     elements.registrationForm.addEventListener("submit", handleRegistrationSubmit);
   }
 
-  // Router / Hash Navigation & Smooth Scroll
-  function handleHashChange() {
-    const hash = window.location.hash.replace("#", "") || "home";
-    const validTabs = ["home", "events", "how-it-works", "verify", "my-certificates", "about"];
-    if (validTabs.includes(hash)) {
-      switchTab(hash, false);
-    } else {
-      switchTab("404", false);
-    }
-  }
-
+  // Router / Hash Navigation & Smooth Scroll to Section
   function switchTab(tabId, updateHash = true) {
     state.currentTab = tabId;
     if (updateHash && tabId !== "404") {
-      window.location.hash = tabId;
+      history.pushState(null, "", `#${tabId}`);
     }
 
-    // Active state on desktop nav
+    updateActiveNavLink(tabId);
+
+    // Find section element by tab ID or anchor ID
+    let targetSection = document.getElementById(`tab-${tabId}`);
+    if (!targetSection && tabId === "how-it-works") {
+      targetSection = document.getElementById("how-it-works-section");
+    } else if (!targetSection && tabId === "home") {
+      targetSection = document.getElementById("hero-section");
+    }
+
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function updateActiveNavLink(tabId) {
     elements.navLinks.forEach(link => {
       if (link.getAttribute("data-tab") === tabId) {
         link.classList.add("active", "text-blue-600", "dark:text-blue-400", "font-semibold");
@@ -286,16 +288,6 @@
         link.classList.remove("active", "text-blue-600", "dark:text-blue-400", "font-semibold");
       }
     });
-
-    // Find section element by tab ID or anchor ID
-    let targetSection = document.getElementById(`tab-${tabId}`);
-    if (!targetSection && tabId === "how-it-works") {
-      targetSection = document.getElementById("how-it-works-section");
-    }
-
-    if (targetSection) {
-      targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
   }
 
   // Theme Toggle
@@ -340,7 +332,7 @@
 
   // IntersectionObserver for Scroll Reveal
   function initScrollReveal() {
-    const revealElements = document.querySelectorAll(".reveal-init");
+    const revealElements = document.querySelectorAll(".reveal-init:not(.reveal-active)");
     if (!revealElements.length) return;
 
     const observerOptions = {
@@ -359,6 +351,31 @@
     }, observerOptions);
 
     revealElements.forEach(el => observer.observe(el));
+  }
+
+  // ScrollSpy to update active tab link on page scroll
+  function initScrollSpy() {
+    const sections = [
+      { id: "hero-section", tab: "home" },
+      { id: "tab-events", tab: "events" },
+      { id: "how-it-works-section", tab: "how-it-works" },
+      { id: "tab-verify", tab: "verify" },
+      { id: "tab-my-certificates", tab: "my-certificates" },
+      { id: "tab-about", tab: "about" }
+    ];
+
+    window.addEventListener("scroll", () => {
+      requestAnimationFrame(() => {
+        const scrollPos = window.scrollY + 200;
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const secEl = document.getElementById(sections[i].id);
+          if (secEl && secEl.offsetTop <= scrollPos) {
+            updateActiveNavLink(sections[i].tab);
+            break;
+          }
+        }
+      });
+    }, { passive: true });
   }
 
   // How It Works Line Observer
