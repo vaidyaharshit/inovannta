@@ -189,11 +189,11 @@
           state.categoryFilter = category;
           const buttons = elements.eventCategoryFilters.querySelectorAll("button");
           buttons.forEach(b => {
-            b.classList.remove("bg-blue-600", "text-white", "shadow-sm");
-            b.classList.add("bg-white", "dark:bg-slate-900", "text-slate-700", "dark:text-slate-300", "border", "border-slate-200", "dark:border-slate-800");
+            b.classList.remove("active");
+            b.classList.add("inactive");
           });
-          btn.classList.remove("bg-white", "dark:bg-slate-900", "text-slate-700", "dark:text-slate-300", "border", "border-slate-200", "dark:border-slate-800");
-          btn.classList.add("bg-blue-600", "text-white", "shadow-sm");
+          btn.classList.remove("inactive");
+          btn.classList.add("active");
           renderEvents();
         }
       });
@@ -209,11 +209,11 @@
           state.passportCategoryFilter = category;
           const buttons = elements.passportCategoryFilters.querySelectorAll("button");
           buttons.forEach(b => {
-            b.classList.remove("bg-blue-600", "text-white", "shadow-sm");
-            b.classList.add("bg-white", "dark:bg-slate-900", "text-slate-700", "dark:text-slate-300", "border", "border-slate-200", "dark:border-slate-800");
+            b.classList.remove("active");
+            b.classList.add("inactive");
           });
-          btn.classList.remove("bg-white", "dark:bg-slate-900", "text-slate-700", "dark:text-slate-300", "border", "border-slate-200", "dark:border-slate-800");
-          btn.classList.add("bg-blue-600", "text-white", "shadow-sm");
+          btn.classList.remove("inactive");
+          btn.classList.add("active");
           renderSavedCertificates();
         }
       });
